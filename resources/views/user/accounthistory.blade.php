@@ -56,33 +56,35 @@
                                 
                                 <input type="text" class="text-md rounded-lg border-1 border-gray-300 shadow-lg w-auto" />
                             </div>
-                            <table class="w-full mt-10 table table-auto overflow-x-auto">
+                            <table class="w-full mt-10 table table-auto overflow-x-auto text-sm text-left">
                                 <thead class="w-full text-sm text-gray-500">
                                     <tr>
-                                        <th>
-                                            Amount
-                                        </th>
-                
-                                        <th>
-                                            Payment Mode
-                                        </th>
-                
-                                        <th>
-                                            Status
-                                        </th>
-                
-                                        <th>
-                                            Date Created
-                                        </th>
+                                        <th class="p-2">Amount</th>
+                                        <th class="p-2">Payment Mode</th>
+                                        <th class="p-2">Status</th>
+                                        <th class="p-2">Date Created</th>
                                     </tr>
                                 </thead>
                 
-                                <tbody>
-                                    <tr class="no-data w-full px-5 py-5 grid">
-                                        <div colspan="2" class="mx-auto w-auto py-5">
-                                            No data available in table
-                                        </div>
-                                    </tr>
+                                <tbody class="text-gray-600">
+                                    @if(count($payments) > 0)
+                                        @foreach($payments as $deposit)
+                                            <tr class="w-full px-5 py-5 hover:bg-gray-200 cursor-pointer">
+                                                <td class="py-2 px-2">${{ number_format($deposit['amount']) }}</td>
+                                                <td class="py-2 px-2 capitalize">{{ $deposit['method'] }}</td>
+                                                <td class="py-2 px-2 text-{{ $deposit['validated'] ? "green" : "red" }}-600">{{ $deposit['validated'] ? "Confirmed" : "Pending" }}</td>
+                                                <td class="py-2 px-2">{{ $deposit['created_at'] }}</td>
+                                            </tr>
+                                        @endforeach
+                                    
+                                        @else
+                                            <tr class="no-data w-full px-5 py-5 grid">
+                                                <div colspan="2" class="mx-auto w-auto py-5">
+                                                    No data available in table
+                                                </div>
+                                            </tr>
+
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -101,37 +103,36 @@
                                 
                                 <input type="text" class="text-md rounded-lg border-1 border-gray-300 shadow-lg w-auto" />
                             </div>
-                            <table class="w-full mt-10 table table-auto overflow-x-auto">
+                            <table class="w-full mt-10 table table-auto overflow-x-auto text-left">
                                 <thead class="w-full text-sm text-gray-500">
                                     <tr>
-                                        <th>
-                                            Amount requested
-                                        </th>
-                
-                                        <th>
-                                            Amount + charges
-                                        </th>
-                
-                                        <th>
-                                            Receiving Mode
-                                        </th>
-                
-                                        <th>
-                                            Status
-                                        </th>
-                
-                                        <th>
-                                            Date created
-                                        </th>
+                                        <th class="p-2">Amount requested</th>
+                                        <th class="p-2">Receiving Mode</th>
+                                        <th class="p-2">Status</th>
+                                        <th class="p-2">Date created</th>
                                     </tr>
                                 </thead>
                 
-                                <tbody>
-                                    <tr class="no-data w-full px-5 py-5 grid">
-                                        <div colspan="2" class="mx-auto w-auto py-5">
-                                            No data available in table
-                                        </div>
-                                    </tr>
+                                <tbody class="text-gray-600">
+                                    @if(count($withdrawals) > 0)
+                                        @foreach($withdrawals as $payoff)
+                                            <tr class="w-full px-5 py-5 hover:bg-gray-200 cursor-pointer">
+                                                <td class="py-2 px-2">${{ number_format($payoff['amount']) }}</td>
+                                                <td class="py-2 px-2 capitalize">{{ $payoff['method'] }}</td>
+                                                <td class="py-2 px-2 text-{{ $payoff['confirmed'] ? "green" : "red" }}-600">{{ $payoff['confirmed'] ? "Confirmed" : "Pending" }}</td>
+                                                <td class="py-2 px-2">{{ $payoff['address'] }}</td>
+                                                <td class="py-2 px-2">{{ $payoff['created_at'] }}</td>
+                                            </tr>
+                                        @endforeach
+                                    
+                                        @else
+                                            <tr class="no-data w-full px-5 py-5 grid text-gray-700s">
+                                                <div colspan="2" class="mx-auto w-auto py-5">
+                                                    No data available in table
+                                                </div>
+                                            </tr>
+
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -149,33 +150,37 @@
                                 
                                 <input type="text" class="text-md rounded-lg border-1 border-gray-300 shadow-lg w-auto" />
                             </div>
-                            <table class="w-full mt-10 table table-auto overflow-x-auto">
+                            <table class="w-full mt-10 table table-auto overflow-x-auto text-left">
                                 <thead class="w-full text-sm text-gray-500">
                                     <tr>
-                                        <th>
-                                            Amount
-                                        </th>
-                
-                                        <th>
-                                            Type
-                                        </th>
-                
-                                        <th>
-                                            Plan/Naration
-                                        </th>
-                
-                                        <th>
-                                            Date created
-                                        </th>
+                                        <th class="p-2">Amount</th>
+                                        <th class="p-2">Profit</th>
+                                        <th class="p-2">Plan/Naration</th>
+                                        <th class="p-2">Status</th>
+                                        <th class="p-2">Date created</th>
                                     </tr>
                                 </thead>
                 
-                                <tbody>
-                                    <tr class="no-data w-full px-5 py-5 grid">
-                                        <div colspan="2" class="mx-auto w-auto py-5">
-                                            No data available in table
-                                        </div>
-                                    </tr>
+                                <tbody class="text-gray-600">
+                                    @if(count($investments) > 0)
+                                        @foreach($investments as $invests)
+                                            <tr class="w-full px-5 py-5 hover:bg-gray-200 cursor-pointer">
+                                                <td class="py-2 px-2">${{ number_format($invests['capital']) }}</td>
+                                                <td class="py-2 px-2 capitalize">${{ number_format($invests['profit']) }}</td>
+                                                <td class="py-2 px-2 capitalize">{{ $invests['plan'] }}</td>
+                                                <td class="py-2 px-2 italic text-xs text-{{ $invests['status'] == 'active' ? "green" : "red" }}-600">{{ $invests['plan'] == 'active' ? "active" : "ended" }}</td>
+                                                <td class="py-2 px-2">{{ $invests['created_at'] }}</td>
+                                            </tr>
+                                        @endforeach
+                                    
+                                        @else
+                                            <tr class="no-data w-full px-5 py-5 grid text-gray-700s">
+                                                <div colspan="2" class="mx-auto w-auto py-5">
+                                                    No data available in table
+                                                </div>
+                                            </tr>
+
+                                    @endif
                                 </tbody>
                             </table>
                         </div>

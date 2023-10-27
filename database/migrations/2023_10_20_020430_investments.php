@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("investments", function (Blueprint $table) {
-            $table->bigIncrements("id");
-
-            $table -> string("user");
-            $table -> bigInteger('capital');
-            $table -> float('profit') -> default(0);
-            $table -> string('plan');
-            $table -> string('status') -> default('active');
-            
-            $table -> timestamps();
+        Schema::create('investments', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('user');
+            $table->bigInteger('capital');
+            $table->float('profit')->default(0);
+            $table->string('plan');
+            $table->string('status')->default('active');
+            $table->timestamp('due_at')->nullable(); // New column for due date/time
+            $table->timestamps();
         });
     }
 

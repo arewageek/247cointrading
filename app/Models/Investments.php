@@ -13,7 +13,10 @@ class Investments extends Model
     protected $fillable = [
         'user',
         'capital',
+        'profit',
         'plan',
+        'status',
+        'due_at',
     ];
 
     protected $table = 'investments';

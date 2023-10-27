@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Investments as Invest;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+use App\Models\Investments as Invest;
+use App\Models\Plans;
 
 class Investments extends Controller
 {
@@ -12,6 +15,7 @@ class Investments extends Controller
         $amount = $request->amount;
         $plan = $request -> plan;
         $user = auth() -> user();
+        $profit = 0;
 
         try{
             $jsonBalances = $user -> balances;
@@ -39,12 +43,19 @@ class Investments extends Controller
                     'message'=> 'Insufficient balance, please fund your account first'
                 ], 200);
             }   
+
+            // get plan details
+            $plan = Plans::where('id', $plan) -> first();
+            
+            $dueDate = Carbon::now() -> addHours($plan -> duration);
             
             $invest = new Invest();
     
             $invest -> user = $user -> username;
-            $invest -> plan = $plan;
+            $invest -> plan = $plan -> name;
             $invest -> capital = $amount;
+            $invest -> profit = $profit;
+            $invest -> status = 'active';
     
             if($invest -> save()){
 

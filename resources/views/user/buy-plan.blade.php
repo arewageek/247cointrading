@@ -1,64 +1,15 @@
 <x-app-layout>
 
     <script>
-        plans = [
-            {
-                id: 'strt',
-                name: 'starter',
-                deposit: {
-                    max: 0,
-                    min: 0,
-                },
-                returns: {
-                    max: 0,
-                    min: 0,
-                },
-                gift: 0,
-                duration: '4 Hours',
-                amount: 0,
-            },
 
-            {
-                id: 'prem',
-                name: 'premium',
-                deposit: {
-                    max: 0,
-                    min: 0,
-                },
-                returns: {
-                    max: 0,
-                    min: 0,
-                },
-                gift: 0,
-                duration: '2 Months',
-                amount: 0,
-            },
+        $.get('/api/plans', res => {
+            console.log(res)
 
-            {
-                id: 'prof',
-                name: 'professional',
-                deposit: {
-                    max: 0,
-                    min: 0,
-                },
-                returns: {
-                    max: 0,
-                    min: 0,
-                },
-                gift: 0,
-                duration: '5 Months',
-                amount: 0,
-            }
-        ]
-
-        const planDOM = $('.plans')
-        
-        $('document').ready(() => {
             $('.plans').html('')
 
-            plans.map(plan => {
+            res.map(plan => {
                 $('.plans').append(`
-                    <div class="w-full md:w-1/3 md:p-2">
+                    <div class="w-full md:w-1/3 md:p-2 my-2">
                         <div class="w-full h-auto rounded-xl shadow-md py-5 px-6 bg-gray-50 text-sm text-gray-700">
                             <div>
                                 <h3 class="text-2xl text-gray-700 px-3 font-bold">${plan.name}</h3>
@@ -66,7 +17,7 @@
                             <div class="h-[100pt] w-full flex justify-center items-center">
                                 <div class="w-full flex justify-center items-baseline text-gray-800">
                                     <span class="text-[16pt]">$</span>
-                                    <span class="text-7xl capitalize">${plan.amount}</span>
+                                    <span class="text-7xl capitalize">${plan.min_deposit}</span>
                                 </div>
                             </div> 
 
@@ -76,7 +27,7 @@
                                         Minimum Possible Deposit:
                                     </div>
                                     <div>
-                                        $${plan.deposit.min}
+                                        $${plan.min_deposit}
                                     </div>
                                 </div>
                                 <div class="flex justify-between">
@@ -84,7 +35,7 @@
                                         Maximum Possible Deposit:
                                     </div>
                                     <div>
-                                        $${plan.deposit.max}
+                                        $${plan.max_deposit}
                                     </div>
                                 </div>
                                 <div class="flex justify-between">
@@ -92,7 +43,7 @@
                                         Minimum Return:
                                     </div>
                                     <div>
-                                        $${plan.returns.min}
+                                        $${plan.min_return}
                                     </div>
                                 </div>
                                 <div class="flex justify-between">
@@ -100,7 +51,7 @@
                                         Maximum Return:
                                     </div>
                                     <div>
-                                        $${plan.returns.max}
+                                        $${plan.max_return}
                                     </div>
                                 </div>
                                 <div class="flex justify-between">
@@ -108,7 +59,7 @@
                                         Gift Bonus:
                                     </div>
                                     <div>
-                                        $${plan.gift}
+                                        $${plan.gift_bonus}
                                     </div>
                                 </div>
                                 <div class="flex justify-between">
@@ -116,21 +67,23 @@
                                         Duration:
                                     </div>
                                     <div>
-                                        ${plan.duration}
+                                        ${ plan.duration > 24 ? `${Math.round(plan.duration/(30.44 * 24))} Months` : `${plan.duration} Hours` }
                                     </div>
                                 </div>
                             </div>
 
                             <div class="">
-                                Amount to invest: ($${plan.amount} default)
+                                Amount to invest: ($${plan.min_deposit} default)
                             </div>
                             <form>
                                 <div class="w-full py-2">
-                                    <input type="number" name="amount" class="${plan.name}-amount w-full rounded border-1 border-gray-900 py-2 px-3 shadow bg-gray-100 placeholder:text-gray-600 text-sm" placeholder="$0" required />
+                                    <input type="hidden" value="${plan.min_deposit}" class="${plan.id}-min_deposit" />
+                                    <input type="hidden" value="${plan.max_deposit}" class="${plan.id}-max_deposit" />
+                                    <input type="number" name="amount" min="${plan.min_deposit}" max="${plan.max_deposit}" class="${plan.id}-amount w-full rounded border-1 border-gray-900 py-2 px-3 shadow bg-gray-100 placeholder:text-gray-600 text-sm" placeholder="$0" required />
                                 </div>
             
                                 <div class="w-full py-2">
-                                    <input type="button" onClick="subscribe('${plan.name}')" class="w-full rounded border-1 bg-blue-600 hover:bg-blue-500 transition-colors border-none text-white py-3 px-3 shadow text-sm cursor-pointer" value="Join Plan" />
+                                    <input type="button" onClick="subscribe('${plan.id}')" class="w-full rounded border-1 bg-blue-600 hover:bg-blue-500 transition-colors border-none text-white py-3 px-3 shadow text-sm cursor-pointer" value="Join Plan" />
                                 </div>
                             </form>
                         </div>
@@ -139,18 +92,26 @@
             })
         })
 
-        function subscribe(name){
-            const plan = `${name}`
-            const amount = Number($(`.${name}-amount`).val())
+        function subscribe(id){
+            const plan = `${id}`
+            const amount = Number($(`.${id}-amount`).val())
+            const min = Number($(`.${plan}-min_deposit`).val())
+            const max = Number($(`.${plan}-max_deposit`).val())
 
-            data = {plan, amount}
+            console.log(min, max, amount)
 
-            $.get('/api/investments/subscribe', data, res => {
-                console.log(res)
-                alert(res.message)
-            })
-            
-            console.log(data)
+            if(amount > min && amount < max){
+                data = {plan, amount}
+                $.get('/api/investments/subscribe', data, res => {
+                    console.log(res)
+                    alert(res.message)
+                })
+                
+                console.log(data)
+            }
+            else{
+                alert("The selected Amount is below or above limit")
+            }
         }
         
     </script>
